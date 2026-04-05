@@ -139,17 +139,44 @@ body, html {
   display: inline-block;
   background-color: #58a6ff;
   color: #121212;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 10px;
+  padding: 12px 24px;
+  border-radius: 12px;
   font-size: 1rem;
-  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-.hero .btn:hover {
-  background-color: #70b8ff;
-  transform: scale(1.05);
+.hero .btn.blob {
+  animation: blobMorph 1.5s ease-in-out forwards;
 }
+
+@keyframes blobMorph {
+  0% {
+    border-radius: 12px;
+    transform: scale(1);
+    background-color: #58a6ff;
+  }
+  25% {
+    border-radius: 40% 60% 50% 30% / 30% 50% 60% 40%;
+    transform: scale(1.1) rotate(5deg);
+    background-color: #70b8ff;
+  }
+  50% {
+    border-radius: 60% 30% 40% 70% / 50% 40% 30% 60%;
+    transform: scale(0.95) rotate(-5deg);
+    background-color: #ff6f61;
+  }
+  75% {
+    border-radius: 50% 60% 30% 40% / 40% 30% 60% 50%;
+    transform: scale(1.05) rotate(3deg);
+    background-color: #ffa861;
+  }
+  100% {
+    border-radius: 12px;
+    transform: scale(1);
+    background-color: #58a6ff;
+  }
+}
+
 
 /* Keyframe Animations for Slide-In Text */
 @keyframes slide-in {

@@ -87,3 +87,5 @@ window.addEventListener("scroll", () => {
   const scrollProgress = (scrollTop / scrollHeight) * 100; // % scrolled
   progressBar.style.width = `${scrollProgress}%`; // Dynamically update bar width
 });
+
+

@@ -316,7 +316,23 @@
       progressBar.style.width = `${scrollProgress}%`; // Dynamically update bar width
     });
 
+ document.addEventListener("DOMContentLoaded", () => {
+  const heroBtn = document.querySelector(".hero .btn");
+
+  heroBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    console.log("Blob morph triggered!");
+    heroBtn.classList.add("blob");
+
+    // Reset after animation so you can click again
+    setTimeout(() => {
+      heroBtn.classList.remove("blob");
+    }, 1500);
+  });
+});
+
 
   </script>
+  <script src="script.js"></script>
 </body>
 </html>
