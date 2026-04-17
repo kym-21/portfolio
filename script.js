@@ -110,6 +110,54 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("portfolio-theme") || "blue";
   applyTheme(savedTheme);
 
+  const skillsStrip = document.querySelector(".skills");
+  const skillTiles = skillsStrip ? Array.from(skillsStrip.querySelectorAll(".skill")) : [];
+  const supportsDockEffect = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  if (skillsStrip && skillTiles.length && supportsDockEffect) {
+    const resetSkillDock = () => {
+      skillTiles.forEach((skill) => {
+        skill.style.transform = "";
+        skill.style.zIndex = "";
+      });
+    };
+
+    const applySkillDock = (clientX) => {
+      skillTiles.forEach((skill) => {
+        const rect = skill.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const distance = Math.abs(clientX - centerX);
+        const influenceRadius = rect.width * 2.1;
+        const normalizedDistance = distance / influenceRadius;
+        const proximity = Math.exp(-(normalizedDistance * normalizedDistance) * 2.4);
+        const scale = 1 + proximity * 0.22;
+        const lift = -(proximity * 6);
+        const shiftX = (clientX - centerX) * proximity * 0.09;
+
+        skill.style.transform = `translateX(${shiftX.toFixed(2)}px) translateY(${lift.toFixed(2)}px) scale(${scale.toFixed(3)})`;
+        skill.style.zIndex = String(Math.round(scale * 100));
+      });
+    };
+
+    let dockFrame = null;
+
+    skillsStrip.addEventListener("pointermove", (event) => {
+      const pointerX = event.clientX;
+
+      if (dockFrame) {
+        window.cancelAnimationFrame(dockFrame);
+      }
+
+      dockFrame = window.requestAnimationFrame(() => {
+        applySkillDock(pointerX);
+        dockFrame = null;
+      });
+    });
+
+    skillsStrip.addEventListener("pointerleave", resetSkillDock);
+    window.addEventListener("resize", resetSkillDock);
+  }
+
   if (!navbar || sections.length === 0) {
     return;
   }

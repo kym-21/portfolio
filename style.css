@@ -620,8 +620,9 @@ body::after {
 .skills {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 18px;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  gap: 14px;
   overflow-x: auto; /* Allow horizontal scrolling */
   padding: 24px 10px;
   scroll-behavior: smooth;
@@ -642,10 +643,15 @@ body::after {
   border-radius: 50%;
   width: 102px;
   height: 102px;
+  flex: 0 0 auto;
+  position: relative;
+  transform: scale(1);
+  transform-origin: center bottom;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.25s, box-shadow 0.25s, opacity 0.25s ease;
+  transition: transform 0.08s linear, box-shadow 0.12s ease-out, opacity 0.12s ease-out;
+  will-change: transform;
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--line);
@@ -663,7 +669,6 @@ body::after {
 }
 
 .skill:hover {
-  transform: scale(1.16);
   z-index: 10; /* Ensures it appears above the neighbors */
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
 }
@@ -683,27 +688,19 @@ body::after {
 }
 
 .skills:hover .skill:not(:hover) {
-  opacity: 0.5; /* De-emphasize non-hovered skills */
-  transform: scale(1); /* Reset size for other skills */
+  opacity: 1;
 }
 
 @media (max-width: 1024px) {
   .skills {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    overflow-x: visible;
-    max-width: 760px;
-    margin: 0 auto;
+    align-items: flex-end;
+    gap: 12px;
     padding: 20px 8px;
   }
 
   .skill {
-    width: 100%;
-    max-width: 110px;
-    aspect-ratio: 1 / 1;
-    height: auto;
-    margin: 0 auto;
+    width: 96px;
+    height: 96px;
     padding: 12px;
   }
 
@@ -722,18 +719,15 @@ body::after {
 
 @media (max-width: 768px) {
   .skills {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: flex-end;
     gap: 12px;
     padding: 20px 6px;
   }
 
   .skill {
-    max-width: 98px;
+    width: 90px;
+    height: 90px;
     padding: 10px;
-  }
-
-  .skill:hover {
-    transform: scale(1.08);
   }
 
   .skill i {
@@ -749,7 +743,8 @@ body::after {
 
 @media (max-width: 520px) {
   .skills {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: flex-start;
+    padding-left: 4px;
   }
 }
 
