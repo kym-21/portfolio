@@ -16,10 +16,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const sections = document.querySelectorAll("section");
   const navToggle = document.querySelector(".nav-toggle");
   const navMenu = document.querySelector(".nav-links");
+  const navBackdrop = document.querySelector(".nav-backdrop");
 
   if (!navbar || sections.length === 0) {
     return;
   }
+
+  if (navLinks.length === 0) {
+    console.error("Navigation links not found. Check your HTML structure.");
+  }
+
+  const closeNav = () => {
+    document.body.classList.remove("nav-open");
+    if (navToggle) {
+      navToggle.setAttribute("aria-expanded", "false");
+    }
+    if (navBackdrop) {
+      navBackdrop.hidden = true;
+    }
+  };
+
+  const openNav = () => {
+    document.body.classList.add("nav-open");
+    if (navToggle) {
+      navToggle.setAttribute("aria-expanded", "true");
+    }
+    if (navBackdrop) {
+      navBackdrop.hidden = false;
+    }
+  };
 
   navLinks.forEach((link) => {
     link.addEventListener("click", function (event) {
@@ -43,33 +68,34 @@ document.addEventListener("DOMContentLoaded", () => {
         behavior: "smooth",
       });
 
-      if (document.body.classList.contains("nav-open")) {
-        document.body.classList.remove("nav-open");
-        if (navToggle) {
-          navToggle.setAttribute("aria-expanded", "false");
-        }
-      }
+      closeNav();
     });
   });
 
   if (navToggle && navMenu) {
     navToggle.addEventListener("click", () => {
-      const isOpen = document.body.classList.toggle("nav-open");
-      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (document.body.classList.contains("nav-open")) {
+        closeNav();
+      } else {
+        openNav();
+      }
     });
+
+    if (navBackdrop) {
+      navBackdrop.hidden = true;
+      navBackdrop.addEventListener("click", closeNav);
+    }
 
     document.addEventListener("click", (event) => {
       const clickedInsideNav = navbar.contains(event.target);
       if (!clickedInsideNav && document.body.classList.contains("nav-open")) {
-        document.body.classList.remove("nav-open");
-        navToggle.setAttribute("aria-expanded", "false");
+        closeNav();
       }
     });
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && document.body.classList.contains("nav-open")) {
-        document.body.classList.remove("nav-open");
-        navToggle.setAttribute("aria-expanded", "false");
+        closeNav();
       }
     });
   }
