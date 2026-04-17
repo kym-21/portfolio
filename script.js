@@ -1,29 +1,117 @@
 document.addEventListener("DOMContentLoaded", () => {
-  if (typeof particlesJS === "function") {
-    particlesJS("particle-background", {
-      particles: {
-        number: { value: 180 },
-        size: { value: 3 },
-        move: { speed: 3 },
-        color: { value: "#58a6ff" },
-        line_linked: { enable: true, distance: 10, color: "#58a6ff" },
-      },
-    });
-  }
-
   const navLinks = document.querySelectorAll(".nav-links a");
   const navbar = document.querySelector(".navbar");
   const sections = document.querySelectorAll("section");
   const navToggle = document.querySelector(".nav-toggle");
   const navMenu = document.querySelector(".nav-links");
   const navBackdrop = document.querySelector(".nav-backdrop");
+  const themeSwitcher = document.querySelector(".theme-switcher");
+  const themeToggle = document.querySelector(".theme-toggle");
+  const themePanel = document.querySelector(".theme-panel");
+  const themeOptions = document.querySelectorAll(".theme-option");
+
+  const progressBar = document.createElement("div");
+  progressBar.style.position = "fixed";
+  progressBar.style.top = "0";
+  progressBar.style.left = "0";
+  progressBar.style.height = "4px";
+  progressBar.style.zIndex = "9999";
+  progressBar.style.transition = "width 0.2s ease";
+  document.body.appendChild(progressBar);
+
+  const getBrandColor = () => {
+    return getComputedStyle(document.body).getPropertyValue("--brand").trim() || "#79b8ff";
+  };
+
+  const setThemeOptionState = (activeTheme) => {
+    themeOptions.forEach((option) => {
+      const isActive = option.dataset.theme === activeTheme;
+      option.classList.toggle("active", isActive);
+      option.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  };
+
+  const initParticles = () => {
+    if (typeof particlesJS !== "function") {
+      return;
+    }
+
+    if (window.pJSDom && window.pJSDom.length) {
+      window.pJSDom.forEach((instance) => {
+        if (instance?.pJS?.fn?.vendors?.destroypJS) {
+          instance.pJS.fn.vendors.destroypJS();
+        }
+      });
+      window.pJSDom = [];
+    }
+
+    const brandColor = getBrandColor();
+    particlesJS("particle-background", {
+      particles: {
+        number: { value: 180 },
+        size: { value: 3 },
+        move: { speed: 3 },
+        color: { value: brandColor },
+        line_linked: { enable: true, distance: 10, color: brandColor },
+      },
+    });
+  };
+
+  const applyTheme = (themeName) => {
+    const allowedThemes = ["blue", "silver", "spotify"];
+    const nextTheme = allowedThemes.includes(themeName) ? themeName : "blue";
+    document.body.dataset.theme = nextTheme;
+    localStorage.setItem("portfolio-theme", nextTheme);
+    setThemeOptionState(nextTheme);
+    progressBar.style.backgroundColor = getBrandColor();
+    initParticles();
+  };
+
+  const closeThemePanel = () => {
+    if (!themePanel || !themeToggle) {
+      return;
+    }
+    themePanel.hidden = true;
+    themeToggle.setAttribute("aria-expanded", "false");
+  };
+
+  const openThemePanel = () => {
+    if (!themePanel || !themeToggle) {
+      return;
+    }
+    themePanel.hidden = false;
+    themeToggle.setAttribute("aria-expanded", "true");
+  };
+
+  if (themeToggle && themePanel) {
+    themePanel.hidden = true;
+    themeToggle.addEventListener("click", () => {
+      if (themePanel.hidden) {
+        openThemePanel();
+      } else {
+        closeThemePanel();
+      }
+    });
+
+    themeOptions.forEach((option) => {
+      option.addEventListener("click", () => {
+        applyTheme(option.dataset.theme || "blue");
+        closeThemePanel();
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      if (themeSwitcher && !themeSwitcher.contains(event.target)) {
+        closeThemePanel();
+      }
+    });
+  }
+
+  const savedTheme = localStorage.getItem("portfolio-theme") || "blue";
+  applyTheme(savedTheme);
 
   if (!navbar || sections.length === 0) {
     return;
-  }
-
-  if (navLinks.length === 0) {
-    console.error("Navigation links not found. Check your HTML structure.");
   }
 
   const closeNav = () => {
@@ -54,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const targetSection = document.querySelector(targetId);
 
       if (!targetSection) {
-        console.error(`Section with ID '${targetId}' not found.`);
         return;
       }
 
@@ -138,22 +225,10 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", () => {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(handleScroll, 50);
-  });
 
-  const progressBar = document.createElement("div");
-  progressBar.style.position = "fixed";
-  progressBar.style.top = "0";
-  progressBar.style.left = "0";
-  progressBar.style.height = "4px";
-  progressBar.style.backgroundColor = "#58a6ff";
-  progressBar.style.zIndex = "9999";
-  progressBar.style.transition = "width 0.2s ease";
-  document.body.appendChild(progressBar);
-
-  window.addEventListener("scroll", () => {
     const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
     const scrollTop = window.scrollY;
-    const scrollProgress = (scrollTop / scrollHeight) * 100;
+    const scrollProgress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
     progressBar.style.width = `${scrollProgress}%`;
   });
 
@@ -226,5 +301,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-

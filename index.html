@@ -45,6 +45,18 @@
   </header>
   <div class="nav-backdrop" hidden></div>
 
+  <div class="theme-switcher">
+    <button class="theme-toggle" type="button" aria-label="Open color themes" aria-expanded="false" aria-controls="theme-panel">
+      <i class="fas fa-palette"></i>
+    </button>
+    <div id="theme-panel" class="theme-panel" hidden>
+      <p>Theme</p>
+      <button type="button" class="theme-option active" data-theme="blue">Blue (Current)</button>
+      <button type="button" class="theme-option" data-theme="silver">Silver</button>
+      <button type="button" class="theme-option" data-theme="spotify">Spotify</button>
+    </div>
+  </div>
+
   <!-- Hero Section (Home) -->
   <section id="home" class="hero">
     <div id="particle-background"></div>
