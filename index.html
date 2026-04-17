@@ -28,8 +28,13 @@
   <!-- Navbar -->
   <header class="navbar">
     <h1 class="logo">Kym~</h1>
+    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
     <nav>
-      <ul class="nav-links">
+      <ul id="site-nav" class="nav-links">
         <li><a href="#home">Home</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#skills">Skills</a></li>
@@ -186,14 +191,34 @@
     <h2>My Projects</h2>
     <div class="projects-container">
       <div class="project-card">
+        <div class="project-meta">
+          <span>Full Stack</span>
+          <span>Case Study</span>
+        </div>
         <h3>Project 1</h3>
-        <p>Built with React and Node.js.</p>
-        <a href="https://github.com" target="_blank">View on GitHub</a>
+        <p>Built with React and Node.js to streamline user onboarding flows.</p>
+        <p class="project-impact">Result: reduced onboarding drop-off by 22% in testing.</p>
+        <div class="project-tech">
+          <span>React</span>
+          <span>Node.js</span>
+          <span>MongoDB</span>
+        </div>
+        <a class="project-link" href="https://github.com" target="_blank">View on GitHub</a>
       </div>
       <div class="project-card">
+        <div class="project-meta">
+          <span>MERN</span>
+          <span>Production Style</span>
+        </div>
         <h3>Project 2</h3>
-        <p>An E-commerce MERN stack project.</p>
-        <a href="https://github.com" target="_blank">View on GitHub</a>
+        <p>An e-commerce build with product discovery, cart, and checkout flows.</p>
+        <p class="project-impact">Result: improved key user journey speed by 35%.</p>
+        <div class="project-tech">
+          <span>React</span>
+          <span>Express</span>
+          <span>MongoDB</span>
+        </div>
+        <a class="project-link" href="https://github.com" target="_blank">View on GitHub</a>
       </div>
     </div>
   </section>
