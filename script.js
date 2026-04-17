@@ -55,16 +55,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleScroll() {
     const scrollPosition = window.scrollY + navbar.offsetHeight;
+    let activeId = sections[0].getAttribute("id");
 
     sections.forEach((section) => {
-      const sectionTop = section.offsetTop;
-      const sectionBottom = sectionTop + section.offsetHeight;
+      const sectionTop = section.offsetTop - navbar.offsetHeight;
 
-      if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-        const currentId = section.getAttribute("id");
-        setActiveLink(currentId);
+      if (scrollPosition >= sectionTop) {
+        activeId = section.getAttribute("id");
       }
     });
+
+    setActiveLink(activeId);
   }
 
   let scrollTimeout;
