@@ -103,24 +103,38 @@ body::after {
 .floating-social {
   position: fixed;
   top: 50%; /* Align vertically centered */
-  left: 20px; /* Padding from the side */
+  right: 20px; /* Keep clear of the hero image/background */
   transform: translateY(-50%); /* Exact vertical centering */
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
   z-index: 999;
+  padding: 14px 12px;
+  border-radius: 999px;
+  background: rgba(18, 18, 18, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
 }
 
 .floating-social a {
-  font-size: 1.7rem;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.2rem;
   color: #f1f1f1;
   text-decoration: none;
-  transition: color 0.3s, transform 0.3s;
+  transition: color 0.25s, transform 0.25s, background-color 0.25s, box-shadow 0.25s;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .floating-social a:hover {
   color: #58a6ff;
-  transform: scale(1.2); /* Hover scaling */
+  transform: translateX(-3px) scale(1.06); /* Hover scaling */
+  background: rgba(88, 166, 255, 0.14);
+  box-shadow: 0 10px 18px rgba(88, 166, 255, 0.16);
 }
 
 /* Hero Section */
@@ -705,6 +719,23 @@ section {
   .hero {
     min-height: auto;
     padding-top: 130px;
+  }
+
+  .floating-social {
+    top: auto;
+    right: 50%;
+    bottom: 18px;
+    transform: translateX(50%);
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 999px;
+  }
+
+  .floating-social a {
+    width: 38px;
+    height: 38px;
+    font-size: 1.05rem;
   }
 
   .hero-text {
