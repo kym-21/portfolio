@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.querySelector(".nav-toggle");
   const navMenu = document.querySelector(".nav-links");
   const navBackdrop = document.querySelector(".nav-backdrop");
+  const floatingSocial = document.querySelector(".floating-social");
+  const socialToggle = document.querySelector(".social-toggle");
   const themeSwitcher = document.querySelector(".theme-switcher");
   const themeToggle = document.querySelector(".theme-toggle");
   const themePanel = document.querySelector(".theme-panel");
@@ -81,6 +83,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const setSocialMenuState = (isOpen) => {
+    if (!floatingSocial || !socialToggle) {
+      return;
+    }
+
+    floatingSocial.classList.toggle("is-open", isOpen);
+    socialToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    socialToggle.setAttribute("aria-label", isOpen ? "Close social links" : "Open social links");
+  };
+
   const closeThemePanel = () => {
     if (!themePanel || !themeToggle) {
       return;
@@ -126,6 +138,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const savedMode = localStorage.getItem("portfolio-mode") || "dark";
   applyMode(savedMode);
+
+  if (socialToggle && floatingSocial) {
+    socialToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      if (!window.matchMedia("(max-width: 768px)").matches) {
+        return;
+      }
+
+      setSocialMenuState(!floatingSocial.classList.contains("is-open"));
+    });
+
+    floatingSocial.addEventListener("click", (event) => {
+      if (!window.matchMedia("(max-width: 768px)").matches) {
+        return;
+      }
+
+      if (event.target.closest("a")) {
+        setSocialMenuState(false);
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!window.matchMedia("(max-width: 768px)").matches) {
+        return;
+      }
+
+      if (!floatingSocial.contains(event.target)) {
+        setSocialMenuState(false);
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (!window.matchMedia("(max-width: 768px)").matches) {
+        setSocialMenuState(false);
+      }
+    });
+  }
 
   if (modeToggle) {
     modeToggle.addEventListener("click", () => {
@@ -341,6 +391,268 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const revealTargets = document.querySelectorAll("section, .project-card, .skill, .about-container, #contact-form");
+
+  const projectCards = document.querySelectorAll(".project-card");
+  const projectStackContainer = document.querySelector(".projects-container");
+  const projectsSection = document.querySelector("#projects");
+  const projectStackToggle = document.querySelector(".project-stack-toggle");
+  const projectsMobileMq = window.matchMedia("(max-width: 768px)");
+  let projectStackExpanded = !projectsMobileMq.matches;
+  let projectStackActiveIndex = 0;
+  const projectDragState = {
+    active: false,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    deltaX: 0,
+    deltaY: 0,
+    cardIndex: 0,
+  };
+
+  const resetProjectCardVars = (card) => {
+    card.style.removeProperty("--stack-x");
+    card.style.removeProperty("--stack-y");
+    card.style.removeProperty("--stack-rotate");
+    card.style.removeProperty("--stack-scale");
+    card.style.removeProperty("--stack-opacity");
+    card.style.removeProperty("--stack-z");
+    card.style.removeProperty("--drag-x");
+    card.style.removeProperty("--drag-y");
+    card.style.removeProperty("--drag-rotate");
+    card.style.removeProperty("--drag-scale");
+  };
+
+  const updateProjectStackLayout = () => {
+    if (!projectsSection || !projectStackToggle) {
+      return;
+    }
+
+    if (!projectsMobileMq.matches) {
+      projectsSection.classList.remove("projects-stack-mobile", "projects-stack-open");
+      projectStackToggle.hidden = true;
+      projectDragState.active = false;
+      projectDragState.pointerId = null;
+
+      projectCards.forEach((card) => {
+        resetProjectCardVars(card);
+        card.style.removeProperty("transform");
+        card.style.removeProperty("z-index");
+        card.style.removeProperty("opacity");
+        card.style.removeProperty("pointer-events");
+      });
+
+      return;
+    }
+
+    projectStackToggle.hidden = false;
+    projectsSection.classList.add("projects-stack-mobile");
+    projectsSection.classList.toggle("projects-stack-open", projectStackExpanded);
+    projectStackToggle.setAttribute("aria-expanded", projectStackExpanded ? "true" : "false");
+    projectStackToggle.setAttribute("aria-label", projectStackExpanded ? "Collapse project stack" : "Open project stack");
+
+    projectCards.forEach((card, index) => {
+      const relativeIndex = index - projectStackActiveIndex;
+      const depth = Math.abs(relativeIndex);
+      const fanOffset = projectStackExpanded ? 1 : 0.35;
+      const xShift = relativeIndex * (projectStackExpanded ? 18 : 11);
+      const yShift = relativeIndex * (projectStackExpanded ? 15 : 12) + depth * 5;
+      const rotation = relativeIndex === 0 ? (projectStackExpanded ? -4 : -2) : relativeIndex > 0 ? 14 : -14;
+      const scale = index === projectStackActiveIndex ? 1 : 0.94 - depth * 0.03;
+      const opacity = index === projectStackActiveIndex ? 1 : depth > 1 ? 0.82 : 0.96;
+      const zIndex = 50 - depth;
+      const isDraggedCard = projectDragState.active && index === projectDragState.cardIndex;
+      const dragRotate = isDraggedCard ? Math.max(Math.min(projectDragState.deltaX * 0.18, 28), -28) : 0;
+      const dragScale = isDraggedCard ? Math.max(0.9, 1 - Math.abs(projectDragState.deltaX) / 760) : 1;
+
+      card.style.setProperty("--stack-x", `${xShift}px`);
+      card.style.setProperty("--stack-y", `${yShift}px`);
+      card.style.setProperty("--stack-rotate", `${rotation * fanOffset}deg`);
+      card.style.setProperty("--stack-scale", scale.toFixed(3));
+      card.style.setProperty("--stack-opacity", opacity.toFixed(3));
+      card.style.setProperty("--stack-z", String(zIndex));
+      card.style.setProperty("--drag-x", isDraggedCard ? `${projectDragState.deltaX.toFixed(2)}px` : "0px");
+      card.style.setProperty("--drag-y", isDraggedCard ? `${projectDragState.deltaY.toFixed(2)}px` : "0px");
+      card.style.setProperty("--drag-rotate", `${dragRotate.toFixed(2)}deg`);
+      card.style.setProperty("--drag-scale", dragScale.toFixed(3));
+
+      card.style.transform = "";
+      card.style.zIndex = String(zIndex);
+      card.style.opacity = String(opacity);
+      card.style.pointerEvents = "auto";
+      card.style.touchAction = "none";
+      card.classList.toggle("is-stack-active", index === projectStackActiveIndex);
+    });
+  };
+
+  const activateProjectCard = (index) => {
+    projectStackActiveIndex = index;
+    projectStackExpanded = true;
+    updateProjectStackLayout();
+  };
+
+  const finishProjectDrag = (event) => {
+    if (!projectDragState.active || event.pointerId !== projectDragState.pointerId) {
+      return;
+    }
+
+    const dragDistance = Math.hypot(projectDragState.deltaX, projectDragState.deltaY);
+    const shouldAdvance = dragDistance > 50;
+
+    projectDragState.active = false;
+    projectDragState.pointerId = null;
+    projectDragState.deltaX = 0;
+    projectDragState.deltaY = 0;
+
+    if (shouldAdvance && projectCards.length > 1) {
+      const direction = projectDragState.startX - event.clientX > 0 ? 1 : -1;
+      const nextIndex = (projectStackActiveIndex + direction + projectCards.length) % projectCards.length;
+      projectStackActiveIndex = nextIndex;
+      projectStackExpanded = true;
+    }
+
+    updateProjectStackLayout();
+  };
+
+  if (projectStackToggle && projectsSection && projectCards.length) {
+    projectStackToggle.hidden = true;
+
+    projectStackToggle.addEventListener("click", () => {
+      projectStackExpanded = !projectStackExpanded;
+      updateProjectStackLayout();
+    });
+
+    projectCards.forEach((card, index) => {
+      card.addEventListener("pointerdown", (event) => {
+        if (!projectsMobileMq.matches || event.button !== 0) {
+          return;
+        }
+
+        if (event.target.closest("a")) {
+          return;
+        }
+
+        projectStackExpanded = true;
+        projectDragState.active = true;
+        projectDragState.pointerId = event.pointerId;
+        projectDragState.startX = event.clientX;
+        projectDragState.startY = event.clientY;
+        projectDragState.deltaX = 0;
+        projectDragState.deltaY = 0;
+        projectDragState.cardIndex = index;
+
+        card.setPointerCapture(event.pointerId);
+        updateProjectStackLayout();
+      });
+
+      card.addEventListener("pointermove", (event) => {
+        if (!projectDragState.active || event.pointerId !== projectDragState.pointerId) {
+          return;
+        }
+
+        projectDragState.deltaX = event.clientX - projectDragState.startX;
+        projectDragState.deltaY = event.clientY - projectDragState.startY;
+        updateProjectStackLayout();
+      });
+
+      card.addEventListener("pointerup", finishProjectDrag);
+      card.addEventListener("pointercancel", finishProjectDrag);
+    });
+
+    if (projectStackContainer) {
+      projectStackContainer.addEventListener("pointerdown", (event) => {
+        if (!projectsMobileMq.matches || event.button !== 0) {
+          return;
+        }
+
+        if (event.target.closest("a, button")) {
+          return;
+        }
+
+        const activeCard = projectCards[projectStackActiveIndex] || projectCards[0];
+        if (!activeCard) {
+          return;
+        }
+
+        projectStackExpanded = true;
+        projectDragState.active = true;
+        projectDragState.pointerId = event.pointerId;
+        projectDragState.startX = event.clientX;
+        projectDragState.startY = event.clientY;
+        projectDragState.deltaX = 0;
+        projectDragState.deltaY = 0;
+        projectDragState.cardIndex = projectStackActiveIndex;
+
+        activeCard.setPointerCapture(event.pointerId);
+        updateProjectStackLayout();
+      });
+    }
+
+    projectsMobileMq.addEventListener("change", () => {
+      projectStackExpanded = !projectsMobileMq.matches;
+      projectStackActiveIndex = 0;
+      projectDragState.active = false;
+      projectDragState.pointerId = null;
+      projectDragState.deltaX = 0;
+      projectDragState.deltaY = 0;
+      updateProjectStackLayout();
+    });
+
+    updateProjectStackLayout();
+  }
+
+  if (projectCards.length && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    projectCards.forEach((card) => {
+      const resetProjectCard = () => {
+        card.style.setProperty("--tilt-x", "0deg");
+        card.style.setProperty("--tilt-y", "0deg");
+        card.style.setProperty("--card-lift", "0px");
+        card.style.setProperty("--card-scale", "1");
+        card.style.setProperty("--card-offset-x", "0px");
+        card.style.setProperty("--card-offset-y", "0px");
+      };
+
+      const updateProjectCardTilt = (clientX, clientY) => {
+        const rect = card.getBoundingClientRect();
+        const xRatio = (clientX - rect.left) / rect.width;
+        const yRatio = (clientY - rect.top) / rect.height;
+        const clampedX = Math.min(Math.max(xRatio, 0), 1);
+        const clampedY = Math.min(Math.max(yRatio, 0), 1);
+        const rotateY = (clampedX - 0.5) * 40;
+        const rotateX = (0.5 - clampedY) * 32;
+        const offsetX = (clampedX - 0.5) * 12;
+        const offsetY = (clampedY - 0.5) * 10;
+        const lift = -3 - (1 - Math.abs(clampedY - 0.5) * 2) * 2;
+        const scale = 1.01 + (1 - Math.abs(clampedX - 0.5) * 2) * 0.01;
+
+        card.style.setProperty("--tilt-x", `${rotateX.toFixed(2)}deg`);
+        card.style.setProperty("--tilt-y", `${rotateY.toFixed(2)}deg`);
+        card.style.setProperty("--card-lift", `${lift.toFixed(2)}px`);
+        card.style.setProperty("--card-scale", scale.toFixed(3));
+        card.style.setProperty("--card-offset-x", `${offsetX.toFixed(2)}px`);
+        card.style.setProperty("--card-offset-y", `${offsetY.toFixed(2)}px`);
+      };
+
+      let tiltFrame = null;
+
+      card.addEventListener("pointermove", (event) => {
+        const clientX = event.clientX;
+        const clientY = event.clientY;
+
+        if (tiltFrame) {
+          window.cancelAnimationFrame(tiltFrame);
+        }
+
+        tiltFrame = window.requestAnimationFrame(() => {
+          updateProjectCardTilt(clientX, clientY);
+          tiltFrame = null;
+        });
+      });
+
+      card.addEventListener("pointerleave", resetProjectCard);
+      card.addEventListener("blur", resetProjectCard, true);
+      resetProjectCard();
+    });
+  }
 
   if ("IntersectionObserver" in window) {
     const revealObserver = new IntersectionObserver(
