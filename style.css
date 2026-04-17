@@ -81,6 +81,73 @@ body[data-theme="spotify"] {
   --on-brand: #09120c;
 }
 
+body[data-theme="verdict"] {
+  --bg-0: #111013;
+  --bg-1: #181620;
+  --bg-2: #241f2e;
+  --surface: rgba(248, 238, 214, 0.06);
+  --surface-strong: rgba(248, 238, 214, 0.1);
+  --text-0: #f7efdc;
+  --text-1: #e2d3b1;
+  --text-2: #baa984;
+  --line: rgba(197, 166, 96, 0.32);
+  --brand: #c5a660;
+  --brand-2: #e3c98d;
+  --accent: #8b6b2f;
+  --brand-rgb: 197, 166, 96;
+  --accent-rgb: 139, 107, 47;
+  --on-brand: #16120a;
+}
+
+body[data-theme="marble"] {
+  --bg-0: #121417;
+  --bg-1: #1a1e24;
+  --bg-2: #262d37;
+  --surface: rgba(244, 248, 255, 0.06);
+  --surface-strong: rgba(244, 248, 255, 0.11);
+  --text-0: #eef4ff;
+  --text-1: #c9d4e9;
+  --text-2: #9aa8c2;
+  --line: rgba(193, 210, 235, 0.28);
+  --brand: #9eb8dc;
+  --brand-2: #c8d8f0;
+  --accent: #d2c4a5;
+  --brand-rgb: 158, 184, 220;
+  --accent-rgb: 210, 196, 165;
+  --on-brand: #10151d;
+}
+
+body[data-theme="library"] {
+  --bg-0: #0f1119;
+  --bg-1: #171d2a;
+  --bg-2: #242c3d;
+  --surface: rgba(245, 230, 198, 0.06);
+  --surface-strong: rgba(245, 230, 198, 0.11);
+  --text-0: #f2e8d1;
+  --text-1: #d8c8a8;
+  --text-2: #ae9a78;
+  --line: rgba(194, 161, 102, 0.3);
+  --brand: #c2a166;
+  --brand-2: #dfc089;
+  --accent: #7f91b8;
+  --brand-rgb: 194, 161, 102;
+  --accent-rgb: 127, 145, 184;
+  --on-brand: #151009;
+}
+
+body[data-mode="light"] {
+  --bg-0: #f3ede1;
+  --bg-1: #faf5ea;
+  --bg-2: #ebe1cf;
+  --surface: rgba(32, 24, 10, 0.055);
+  --surface-strong: rgba(32, 24, 10, 0.09);
+  --text-0: #1f1a14;
+  --text-1: #514736;
+  --text-2: #7f735f;
+  --line: rgba(56, 43, 26, 0.18);
+  --on-brand: #fff7e9;
+}
+
 body, html {
   font-family: "Sora", "Avenir Next", "Segoe UI", "Trebuchet MS", sans-serif;
   color: var(--text-0);
@@ -109,7 +176,7 @@ body {
   height: 46px;
   border-radius: 50%;
   border: 1px solid var(--line);
-  background: rgba(15, 17, 21, 0.92);
+  background: color-mix(in srgb, var(--bg-0) 90%, transparent);
   color: var(--brand);
   display: grid;
   place-items: center;
@@ -130,7 +197,7 @@ body {
   border-radius: 14px;
   padding: 10px;
   border: 1px solid var(--line);
-  background: rgba(15, 17, 21, 0.95);
+  background: color-mix(in srgb, var(--bg-0) 92%, transparent);
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.28);
 }
 
@@ -198,10 +265,11 @@ body::after {
 /* Navbar */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: 12px;
   padding: 10px 20px;
-  background: rgba(15, 17, 21, 0.9);
+  background: color-mix(in srgb, var(--bg-0) 88%, transparent);
   border-bottom: 1px solid var(--line);
   position: fixed;
   top: 0;
@@ -215,6 +283,7 @@ body::after {
 .navbar nav {
   display: flex;
   align-items: center;
+  margin-left: auto;
 }
 
 .navbar.scrolled {
@@ -232,7 +301,64 @@ body::after {
   list-style: none;
   display: flex;
   gap: 8px;
-  margin-left: auto;
+}
+
+.mode-toggle {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-0) 84%, transparent);
+  color: var(--brand);
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.mode-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(var(--brand-rgb), 0.45);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+}
+
+.mode-toggle.is-spinning {
+  transform: rotate(180deg);
+}
+
+.mode-icon-wrap {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.mode-icon-wrap i {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition: transform 0.36s ease, opacity 0.36s ease;
+}
+
+body[data-mode="dark"] .mode-sun {
+  opacity: 0;
+  transform: rotate(85deg) scale(0.38);
+}
+
+body[data-mode="dark"] .mode-moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+body[data-mode="light"] .mode-sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+body[data-mode="light"] .mode-moon {
+  opacity: 0;
+  transform: rotate(-85deg) scale(0.38);
 }
 
 .nav-toggle {
@@ -284,7 +410,7 @@ body::after {
 .nav-links li a:hover,
 .nav-links li a.active {
   color: var(--brand);
-  background: rgba(121, 184, 255, 0.14);
+  background: rgba(var(--brand-rgb), 0.14);
   font-weight: 600;
 }
 
@@ -300,8 +426,8 @@ body::after {
   z-index: 999;
   padding: 14px 12px;
   border-radius: 999px;
-  background: rgba(15, 17, 21, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: color-mix(in srgb, var(--bg-0) 78%, transparent);
+  border: 1px solid var(--line);
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.24);
 }
 
@@ -312,10 +438,14 @@ body::after {
   place-items: center;
   border-radius: 50%;
   font-size: 1.2rem;
-  color: #f1f1f1;
+  color: var(--text-0);
   text-decoration: none;
   transition: color 0.25s, transform 0.25s, background-color 0.25s, box-shadow 0.25s;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--brand-rgb), 0.08);
+}
+
+body[data-mode="light"] .floating-social a {
+  background: rgba(0, 0, 0, 0.07);
 }
 
 .floating-social a:hover {
@@ -680,7 +810,7 @@ body::after {
 
 .skill p {
   font-size: 0.72rem;
-  color: #fff;
+  color: var(--text-0);
   margin-top: 5px;
   line-height: 1;
   max-width: 100%;
@@ -1053,6 +1183,7 @@ section {
 #contact-form textarea:focus-visible,
 #contact-form button:focus-visible,
 .nav-toggle:focus-visible,
+.mode-toggle:focus-visible,
 .theme-toggle:focus-visible,
 .theme-option:focus-visible {
   box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.28);
@@ -1081,7 +1212,18 @@ section {
 
 @media (max-width: 768px) {
   .navbar {
-    padding-right: 72px;
+    padding-right: 122px;
+  }
+
+  .mode-toggle {
+    position: absolute;
+    right: 64px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .mode-toggle.is-spinning {
+    transform: translateY(-50%) rotate(180deg);
   }
 
   .nav-toggle {
@@ -1235,7 +1377,7 @@ footer p {
 }
 
 footer .social-icons a {
-  color: #f1f1f1;
+  color: var(--text-0);
   text-decoration: none;
   font-size: 1.5rem;
   transition: color 0.3s;

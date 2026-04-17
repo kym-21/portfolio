@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.querySelector(".theme-toggle");
   const themePanel = document.querySelector(".theme-panel");
   const themeOptions = document.querySelectorAll(".theme-option");
+  const modeToggle = document.querySelector(".mode-toggle");
 
   const progressBar = document.createElement("div");
   progressBar.style.position = "fixed";
@@ -58,13 +59,26 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const applyTheme = (themeName) => {
-    const allowedThemes = ["blue", "silver", "spotify"];
+    const allowedThemes = ["blue", "silver", "spotify", "verdict", "marble", "library"];
     const nextTheme = allowedThemes.includes(themeName) ? themeName : "blue";
     document.body.dataset.theme = nextTheme;
     localStorage.setItem("portfolio-theme", nextTheme);
     setThemeOptionState(nextTheme);
     progressBar.style.backgroundColor = getBrandColor();
     initParticles();
+  };
+
+  const applyMode = (modeName) => {
+    const nextMode = modeName === "light" ? "light" : "dark";
+    document.body.dataset.mode = nextMode;
+    localStorage.setItem("portfolio-mode", nextMode);
+
+    if (modeToggle) {
+      const isLight = nextMode === "light";
+      modeToggle.setAttribute("aria-pressed", isLight ? "true" : "false");
+      modeToggle.setAttribute("aria-label", isLight ? "Switch to dark mode" : "Switch to light mode");
+      modeToggle.setAttribute("title", isLight ? "Switch to dark mode" : "Switch to light mode");
+    }
   };
 
   const closeThemePanel = () => {
@@ -109,6 +123,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const savedTheme = localStorage.getItem("portfolio-theme") || "blue";
   applyTheme(savedTheme);
+
+  const savedMode = localStorage.getItem("portfolio-mode") || "dark";
+  applyMode(savedMode);
+
+  if (modeToggle) {
+    modeToggle.addEventListener("click", () => {
+      const nextMode = document.body.dataset.mode === "light" ? "dark" : "light";
+
+      modeToggle.classList.remove("is-spinning");
+      void modeToggle.offsetWidth;
+      modeToggle.classList.add("is-spinning");
+
+      window.setTimeout(() => {
+        modeToggle.classList.remove("is-spinning");
+      }, 320);
+
+      applyMode(nextMode);
+    });
+  }
 
   const skillsStrip = document.querySelector(".skills");
   const skillTiles = skillsStrip ? Array.from(skillsStrip.querySelectorAll(".skill")) : [];

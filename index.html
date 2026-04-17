@@ -11,7 +11,7 @@
     href="assets/vendor/fontawesome/css/all.min.css"
     rel="stylesheet" />
 </head>
-<body>
+<body data-mode="dark">
   <!-- Floating Social Links -->
   <div class="floating-social">
     <a href="https://github.com" target="_blank" aria-label="GitHub">
@@ -42,6 +42,12 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
+    <button class="mode-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false" title="Toggle light and dark mode">
+      <span class="mode-icon-wrap" aria-hidden="true">
+        <i class="fas fa-sun mode-sun"></i>
+        <i class="fas fa-moon mode-moon"></i>
+      </span>
+    </button>
   </header>
   <div class="nav-backdrop" hidden></div>
 
@@ -54,6 +60,9 @@
       <button type="button" class="theme-option active" data-theme="blue">Blue (Current)</button>
       <button type="button" class="theme-option" data-theme="silver">Silver</button>
       <button type="button" class="theme-option" data-theme="spotify">Spotify</button>
+      <button type="button" class="theme-option" data-theme="verdict">Verdict Gold</button>
+      <button type="button" class="theme-option" data-theme="marble">Marble Chamber</button>
+      <button type="button" class="theme-option" data-theme="library">Midnight Library</button>
     </div>
   </div>
 
