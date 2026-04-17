@@ -148,6 +148,24 @@ body[data-mode="light"] {
   --on-brand: #fff7e9;
 }
 
+body[data-theme="silver"][data-mode="light"] {
+  --bg-0: #eef2f7;
+  --bg-1: #f7f9fc;
+  --bg-2: #dde5ef;
+  --surface: rgba(22, 34, 50, 0.055);
+  --surface-strong: rgba(22, 34, 50, 0.095);
+  --text-0: #1c2736;
+  --text-1: #3a4a5f;
+  --text-2: #607086;
+  --line: rgba(63, 80, 102, 0.26);
+  --brand: #5f7694;
+  --brand-2: #7f95b0;
+  --accent: #7f90a8;
+  --brand-rgb: 95, 118, 148;
+  --accent-rgb: 127, 144, 168;
+  --on-brand: #f7fbff;
+}
+
 body, html {
   font-family: "Sora", "Avenir Next", "Segoe UI", "Trebuchet MS", sans-serif;
   color: var(--text-0);
